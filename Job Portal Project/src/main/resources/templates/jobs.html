@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Jobs - JobPortal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .search-section {
+            background: linear-gradient(rgba(13, 110, 253, 0.9), rgba(10, 88, 202, 0.9)), url('/images/jobs-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 50px 0;
+            margin-bottom: 50px;
+        }
+        .search-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .job-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            margin-bottom: 20px;
+        }
+        .job-card:hover {
+            transform: translateY(-5px);
+        }
+        .company-logo {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        .filter-card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            border: none;
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        }
+        .pagination .page-link {
+            border-radius: 8px;
+            margin: 0 5px;
+            color: #0d6efd;
+        }
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            border-color: #0d6efd;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-briefcase me-2"></i>JobPortal
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/"><i class="fas fa-home me-2"></i>Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/jobs"><i class="fas fa-search me-2"></i>Jobs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/companies"><i class="fas fa-building me-2"></i>Companies</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about"><i class="fas fa-info-circle me-2"></i>About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact"><i class="fas fa-envelope me-2"></i>Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-2"></i>Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Search Section -->
+    <section class="search-section">
+        <div class="container">
+            <div class="search-box">
+                <h4 class="mb-4">Search Jobs</h4>
+                <form>
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <input type="text" class="form-control" placeholder="Job title or keyword">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <input type="text" class="form-control" placeholder="Location">
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <select class="form-select">
+                                <option selected>Job Type</option>
+                                <option>Full Time</option>
+                                <option>Part Time</option>
+                                <option>Contract</option>
+                                <option>Remote</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search me-2"></i>Search Jobs
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Jobs Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row">
+                <!-- Filters -->
+                <div class="col-md-3">
+                    <div class="card filter-card">
+                        <div class="card-body">
+                            <h5 class="card-title mb-4">Filters</h5>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Job Type</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="fullTime">
+                                    <label class="form-check-label" for="fullTime">Full Time</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="partTime">
+                                    <label class="form-check-label" for="partTime">Part Time</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="contract">
+                                    <label class="form-check-label" for="contract">Contract</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="remote">
+                                    <label class="form-check-label" for="remote">Remote</label>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Experience Level</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="entry">
+                                    <label class="form-check-label" for="entry">Entry Level (0-2 years)</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="mid">
+                                    <label class="form-check-label" for="mid">Mid Level (3-5 years)</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="senior">
+                                    <label class="form-check-label" for="senior">Senior Level (5+ years)</label>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Salary Range (₹)</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="range1">
+                                    <label class="form-check-label" for="range1">₹0 - ₹3,00,000</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="range2">
+                                    <label class="form-check-label" for="range2">₹3,00,000 - ₹6,00,000</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="range3">
+                                    <label class="form-check-label" for="range3">₹6,00,000 - ₹12,00,000</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="range4">
+                                    <label class="form-check-label" for="range4">₹12,00,000+</label>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <h6 class="mb-3">Location</h6>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="bangalore">
+                                    <label class="form-check-label" for="bangalore">Bangalore</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="chennai">
+                                    <label class="form-check-label" for="chennai">Chennai</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="delhi">
+                                    <label class="form-check-label" for="delhi">Delhi/NCR</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="hyderabad">
+                                    <label class="form-check-label" for="hyderabad">Hyderabad</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="mumbai">
+                                    <label class="form-check-label" for="mumbai">Mumbai</label>
+                                </div>
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input" type="checkbox" id="pune">
+                                    <label class="form-check-label" for="pune">Pune</label>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary w-100">Apply Filters</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Listings -->
+                <div class="col-md-9">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4>All Jobs</h4>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                Sort By: Latest
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Latest</a></li>
+                                <li><a class="dropdown-item" href="#">Most Popular</a></li>
+                                <li><a class="dropdown-item" href="#">Salary: High to Low</a></li>
+                                <li><a class="dropdown-item" href="#">Salary: Low to High</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Job Cards -->
+                    <div class="job-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="/images/company1.png" alt="Company Logo" class="company-logo me-3">
+                                <div>
+                                    <h5 class="card-title mb-1">Senior Software Engineer</h5>
+                                    <p class="card-text text-muted mb-0">Tech Solutions India Pvt Ltd</p>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Bangalore, Karnataka</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-0"><i class="fas fa-clock me-2"></i>Full Time</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="job-salary">
+                                        <i class="fas fa-rupee-sign me-2"></i>
+                                        <span>₹15,00,000 - ₹25,00,000 per annum</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Join our team of talented developers and work on cutting-edge projects. We're looking for an experienced software engineer to help us build scalable solutions.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-primary me-2">Java</span>
+                                    <span class="badge bg-primary me-2">Spring Boot</span>
+                                    <span class="badge bg-primary">Microservices</span>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary">Apply Now</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="job-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="/images/company2.png" alt="Company Logo" class="company-logo me-3">
+                                <div>
+                                    <h5 class="card-title mb-1">Marketing Manager</h5>
+                                    <p class="card-text text-muted mb-0">Digital Marketing Pro India</p>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Mumbai, Maharashtra</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-0"><i class="fas fa-clock me-2"></i>Full Time</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="job-salary">
+                                        <i class="fas fa-rupee-sign me-2"></i>
+                                        <span>₹8,00,000 - ₹12,00,000 per annum</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Lead our marketing team and drive growth through innovative strategies. We need a creative and data-driven marketing manager to help us reach new heights.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-primary me-2">Digital Marketing</span>
+                                    <span class="badge bg-primary me-2">SEO</span>
+                                    <span class="badge bg-primary">Social Media</span>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary">Apply Now</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="job-card">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-3">
+                                <img src="/images/company3.png" alt="Company Logo" class="company-logo me-3">
+                                <div>
+                                    <h5 class="card-title mb-1">Data Analyst</h5>
+                                    <p class="card-text text-muted mb-0">Data Insights India Pvt Ltd</p>
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-4">
+                                    <p class="mb-0"><i class="fas fa-map-marker-alt me-2"></i>Hyderabad, Telangana</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-0"><i class="fas fa-clock me-2"></i>Full Time</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="job-salary">
+                                        <i class="fas fa-rupee-sign me-2"></i>
+                                        <span>₹6,00,000 - ₹10,00,000 per annum</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <p class="card-text">Transform data into actionable insights and drive business decisions. We're seeking a skilled data analyst to help us make sense of complex data sets.</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="badge bg-primary me-2">SQL</span>
+                                    <span class="badge bg-primary me-2">Python</span>
+                                    <span class="badge bg-primary">Data Visualization</span>
+                                </div>
+                                <a href="#" class="btn btn-outline-primary">Apply Now</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1"><i class="fas fa-chevron-left"></i></a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Include Footer -->
+    <div th:replace="fragments/footer :: footer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 
